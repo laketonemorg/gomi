@@ -1,0 +1,96 @@
+
+## ターミナル
+
+### 対話型チャット
+
+コマンドラインから `interpreter` を実行することで、対話型のチャットをターミナルで開始できます。
+
+```bash
+interpreter
+```
+
+### 新しいチャットを開始する
+
+ターミナル上で、Open InterpreterはChatGPTのように動作し、以前の会話を覚えていません。新しいチャットを開始するには、単に `interpreter` を実行します。
+
+```bash
+interpreter
+```
+
+### チャットの保存と復元
+
+Open Interpreterは、以前の会話を `<your application directory>/Open Interpreter/conversations/` に保存します。
+
+それらを復元するには `--conversations` を実行して、矢印キーで一つを選択し、ENTERキーを押して再開します。
+
+```bash
+interpreter --conversations
+```
+
+### デフォルト設定の構成
+
+デフォルト設定は、設定ファイルに保存され、次のコマンドを実行して編集できます。
+
+```bash
+interpreter --config
+```
+
+### 使用言語モデルの変更
+
+Open InterpreterはLiteLLMを使用して言語モデルに接続します。
+
+モデルを変更するには、`model` パラメータを設定します。
+
+```bash
+interpreter --model gpt-3.5-turbo
+interpreter --model claude-2
+interpreter --model command-nightly
+```
+
+### 引数
+
+- `--model` または `-m`：使用する言語モデルを指定します。
+- `--local` または `-l`：モデルをローカルで実行します。
+- `--auto_run` または `-y`：ユーザーの確認を必要とせずにインタープリタを自動で実行します。
+- `--debug_mode` または `-d`：デバッグモードでインタープリタを実行します。各ステップでデバッグ情報が出力され、問題の診断を支援します。
+- `--temperature` または `-t`：モデルの出力のランダム性のレベルを設定します。
+- `--context_window` または `-c`：モデルのコンテキストウィンドウサイズをトークンで手動設定します。
+- `--max_tokens` または `-x`：モデルが一度に生成できるトークンの最大数を設定します。
+- `--max_budget` または `-b`：セッションの最大予算制限をUSDで設定します。
+- `--api_base` または `-ab`：カスタムAPIを使用している場合、この引数でそのベースURLを指定します。
+- `--api_key` または `-ak`：API呼び出し時に認証用のAPIキーを設定します。
+- `--safe_mode` または `-safe`：コードスキャンなどの実験的な安全メカニズムを有効/無効にします。オプションとしてoff、ask、autoがあります。
+
+### 設定
+
+デフォルト設定は、設定ファイルを介して編集できます。ファイルを開くには、実行してください：
+
+```bash
+interpreter --config
+```
+
+### 会話履歴
+
+次のようにして、チャットを再開することができます：
+
+```bash
+interpreter --conversations
+```
+
+### マジックコマンド
+
+対話モードでインタープリタの動作をコントロールするために、マジックコマンドを使用できます：
+
+- `%debug [true/false]`：デバッグモードのオン/オフを切り替えます
+- `%reset`：現在のセッションをリセットします
+- `%undo`：最後のメッセージとそのレスポンスを削除します
+- `%save_message [path]`：メッセージをJSONファイルに保存します
+- `%load_message [path]`：JSONファイルからメッセージをロードします
+
+### バジェットマネージャー
+
+セッションごとに最大予算を設定できます：
+
+```bash
+interpreter --max_budget 0.01
+```

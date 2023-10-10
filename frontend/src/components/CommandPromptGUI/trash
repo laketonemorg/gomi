@@ -1,0 +1,41 @@
+import React, { useRef, useEffect } from 'react';
+import InteractiveSession from '../InteractiveSession/InteractiveSession'; // <-- 名前を変更
+import './CommandPromptGUI.css';
+
+// コマンドプロンプト風のUIコンポーネント
+const CommandPromptGUI = ({ history, onCommandOutput }) => {
+  // スクロール管理用の参照オブジェクト
+  const historyEndRef = useRef(null);
+
+  // 履歴が更新されるたびに最新のエントリーまでスクロール
+  useEffect(() => {
+    if (historyEndRef.current) {
+      historyEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [history]);
+
+  return (
+    <div>
+      {/* コマンドプロンプト風の出力部分 */}
+      <div className="commandPrompt">
+        {/* 履歴をマッピングして表示 */}
+        {history.map((item, index) => (
+          <div key={index}>
+            {/* 入力と出力を区別して表示 */}
+            {item.type === 'input' ? '> ' : ''}
+            {item.content}
+          </div>
+        ))}
+        {/* スクロール管理用のdiv */}
+        <div ref={historyEndRef}></div>
+      </div>
+      {/* コマンド実行コンポーネント */}
+      <InteractiveSession  <!-- 名前を変更 -->
+        inputCommand={history.length > 0 ? history[history.length - 1].content : ''} 
+        onOutputChange={onCommandOutput} 
+      />
+    </div>
+  );
+};
+
+export default CommandPromptGUI;

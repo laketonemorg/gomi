@@ -1,0 +1,332 @@
+Hosted Models
+OpenAI
+To use Open Interpreter with a model from OpenAI, simply run:
+
+
+Terminal
+
+Python
+
+interpreter
+This will default to gpt-4, which is the most capable publicly available model for code interpretation (Open Interpreter was designed to be used with gpt-4).
+
+To run a specific model from OpenAI, set the model flag:
+
+
+Terminal
+
+Python
+
+interpreter --model gpt-3.5-turbo
+​
+Supported Models
+We support any model on OpenAI’s models page:
+
+
+Terminal
+
+Python
+
+interpreter --model gpt-4
+interpreter --model gpt-4-32k
+interpreter --model gpt-3.5-turbo
+interpreter --model gpt-3.5-turbo-16k
+​
+Required Environment Variables
+Set the following environment variables (click here to learn how) to use these models.
+
+Environment Variable	Description	Where to Find
+OPENAI_API_KEY	The API key for authenticating to OpenAI’s services.	OpenAI Account Page
+
+Python
+Arguments
+messages
+This property holds a list of messages between the user and the interpreter.
+
+You can use it to restore a conversation:
+
+
+interpreter.chat("Hi! Can you print hello world?")
+
+print(interpreter.messages)
+
+# This would output:
+
+[
+   {
+      "role": "user",
+      "message": "Hi! Can you print hello world?"
+   },
+   {
+      "role": "assistant",
+      "message": "Sure!"
+   }
+   {
+      "role": "assistant",
+      "language": "python",
+      "code": "print('Hello, World!')",
+      "output": "Hello, World!"
+   }
+]
+You can use this to restore interpreter to a previous conversation.
+
+
+interpreter.messages = messages # A list that resembles the one above
+​
+local
+This boolean flag determines whether the model runs locally (True) or in the cloud (False).
+
+
+interpreter.local = True  # Run locally
+interpreter.local = False  # Run in the cloud
+Use this in conjunction with the model parameter to set your language model.
+
+​
+auto_run
+Setting this flag to True allows Open Interpreter to automatically run the generated code without user confirmation.
+
+
+interpreter.auto_run = True  # Don't require user confirmation
+interpreter.auto_run = False  # Require user confirmation (default)
+​
+debug_mode
+Use this boolean flag to toggle debug mode on or off. Debug mode will print information at every step to help diagnose problems.
+
+
+interpreter.debug_mode = True  # Turns on debug mode
+interpreter.debug_mode = False  # Turns off debug mode
+​
+max_output
+This property sets the maximum number of tokens for the output response.
+
+
+interpreter.max_output = 2000
+​
+conversation_history
+A boolean flag to indicate if the conversation history should be stored or not.
+
+
+interpreter.conversation_history = True  # To store history
+interpreter.conversation_history = False  # To not store history
+​
+conversation_filename
+This property sets the filename where the conversation history will be stored.
+
+
+interpreter.conversation_filename = "my_conversation.json"
+​
+conversation_history_path
+You can set the path where the conversation history will be stored.
+
+
+import os
+interpreter.conversation_history_path = os.path.join("my_folder", "conversations")
+​
+model
+Specifies the language model to be used.
+
+If interpreter.local is set to True, the language model will be run locally.
+
+
+interpreter.model = "gpt-3.5-turbo"
+​
+temperature
+Sets the randomness level of the model’s output.
+
+
+interpreter.temperature = 0.7
+​
+system_message
+This stores the model’s system message as a string. Explore or modify it:
+
+
+interpreter.system_message += "\nRun all shell commands with -y."
+​
+context_window
+This manually sets the context window size in tokens.
+
+We try to guess the right context window size for you model, but you can override it with this parameter.
+
+
+interpreter.context_window = 16000
+​
+max_tokens
+Sets the maximum number of tokens the model can generate in a single response.
+
+
+interpreter.max_tokens = 100
+​
+api_base
+If you are using a custom API, you can specify its base URL here.
+
+
+interpreter.api_base = "https://api.example.com"
+​
+api_key
+Set your API key for authentication.
+
+
+interpreter.api_key = "your_api_key_here"
+​
+max_budget
+This property sets the maximum budget limit for the session in USD.
+
+
+interpreter.max_budget = 0.01 # 1 cent
+
+
+Python
+Streaming Response
+You can stream messages, code, and code outputs out of Open Interpreter by setting stream=True in an interpreter.chat(message) call.
+
+
+for chunk in interpreter.chat("What's 34/24?", stream=True, display=False):
+  print(chunk)
+
+{'language': 'python'}
+{'code': '34'}
+{'code': ' /'}
+{'code': ' '}
+{'code': '24'}
+{'executing': {'code': '34 / 24', 'language': 'python'}}
+{'active_line': 1}
+{'output': '1.4166666666666667\n'}
+{'active_line': None}
+{'end_of_execution': True}
+{'message': 'The'}
+{'message': ' result'}
+{'message': ' of'}
+{'message': ' the'}
+{'message': ' division'}
+{'message': ' '}
+{'message': '34'}
+{'message': '/'}
+{'message': '24'}
+{'message': ' is'}
+{'message': ' approximately'}
+{'message': ' '}
+{'message': '1'}
+{'message': '.'}
+{'message': '42'}
+{'message': '.'}
+Note: Setting display=True won’t change the behavior of the streaming response, it will just render a display in your terminal.
+
+​
+Anatomy
+Let’s break down each part of the streamed response.
+
+​
+Code
+In this example, the LLM decided to start writing code first. It could have decided to write a message first, or to only write code, or to only write a message.
+
+Before writing any code, the LLM will always set the language for the code it’s about to write. In this case it decided to write python.
+
+This can be any language defined in our languages directory.
+
+
+{'language': 'python'}
+Then, the LLM decided to write some code. The code is sent token-by-token:
+
+
+{'code': '34'}
+{'code': ' /'}
+{'code': ' '}
+{'code': '24'}
+​
+Code Output
+After the LLM finishes writing a code block, Open Interpreter will attempt to run it.
+
+Before it runs it, the following message is sent:
+
+
+{'executing': {'code': '34 / 24', 'language': 'python'}}
+If you check for this object, you can break (or get confirmation) before executing the code.
+
+
+# This example asks the user before running code
+
+for chunk in interpreter.chat("What's 34/24?", stream=True):
+    if "executing" in chunk:
+        if input("Press ENTER to run this code.") != "":
+            break
+While the code is being executed, you’ll recieve the line of code that’s being run:
+
+
+{'active_line': 1}
+We use this to highlight the active line of code on our UI, which keeps the user aware of what Open Interpreter is doing.
+
+You’ll then recieve its output, if it produces any:
+
+
+{'output': '1.4166666666666667\n'}
+When the code is finished executing, this flag will be sent:
+
+
+{'end_of_execution': True}
+​
+Message
+Finally, the LLM decided to write a message. This is streamed token-by-token as well:
+
+
+{'message': 'The'}
+{'message': ' result'}
+{'message': ' of'}
+{'message': ' the'}
+{'message': ' division'}
+{'message': ' '}
+{'message': '34'}
+{'message': '/'}
+{'message': '24'}
+{'message': ' is'}
+{'message': ' approximately'}
+{'message': ' '}
+{'message': '1'}
+{'message': '.'}
+{'message': '42'}
+{'message': '.'}
+
+Python
+Settings
+Default settings will be inherited from a configuration file in your application directory. This is true for python and for the terminal interface.
+
+To open the file, run:
+
+
+interpreter --config
+
+Python
+Conversation History
+Conversations will be saved in your application directory. This is true for python and for the terminal interface.
+
+The command below, when run in your terminal, will show you which folder they’re being saved in (use your arrow keys to move down and press enter over > Open Folder):
+
+
+interpreter --conversations
+You can turn off conversation history for a particular conversation:
+
+
+import interpreter
+
+interpreter.conversation_history = False
+interpreter.chat() # Conversation history will not be saved
+
+Python
+Magic Commands
+If you run an interactive chat in python, you can use magic commands built for terminal usage:
+
+
+interpreter.chat()
+The following magic commands will work:
+
+%debug [true/false]: Toggle debug mode
+%reset: Reset the current session
+%undo: Remove the last message and its response
+%save_message [path]: Save messages to a JSON file
+%load_message [path]: Load messages from a JSON file
+
+Python
+Budget Manager
+The max_budget property sets the maximum budget limit for the session in USD.
+
+
+interpreter.max_budget = 0.01 # 1 cent

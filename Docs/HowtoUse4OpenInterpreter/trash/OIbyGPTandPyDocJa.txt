@@ -1,0 +1,136 @@
+ Open Interpreterの日本語ドキュメント
+Open Interpreter（オープンインタープリター）
+このモジュールは、OpenAIのコードインタープリタのオープンソース、ローカル実行実装です。
+1. ホストモデル
+OpenAIで提供されているモデルを使用するには、以下のように実行します。
+```python
+interpreter
+デフォルトでは、gpt-4が使用されます。これはコード解釈に最も適した公開モデルです。
+特定のモデルを指定して実行するには、モデルフラグを設定します。
+python
+interpreter --model gpt-3.5-turbo
+1 1 サポートされているモデル
+以下のモデルがサポートされています。
+python
+interpreter --model gpt-4
+interpreter --model gpt-4-32k
+interpreter --model gpt-3.5-turbo
+interpreter --model gpt-3.5-turbo-16k
+1 2 必須の環境変数
+以下の環境変数を設定してください。
+OPENAI_API_KEY: OpenAIのサービスへの認証のためのAPIキー
+属性とメソッド
+2 1 messages
+ユーザーとインタープリター間のメッセージリストです。会話を復元するのに使用できます。
+例:
+python
+interpreter.chat("Hi! Can you print hello world?")
+print(interpreter.messages)
+出力:
+[
+   {"role": "user", "message": "Hi! Can you print hello world?"},
+   {"role": "assistant", "message": "Sure!"},
+   {"role": "assistant", "language": "python", "code": "print('Hello, World!')", "output": "Hello, World!"}
+]
+2 2 local
+このブールフラグは、モデルがローカリー（True）で実行されるかクラウド（False）で実行されるかを決定します。
+例:
+python
+interpreter.local = True  # ローカルで実行
+2 3 auto_run
+このフラグをTrueに設定すると、生成されたコードがユーザーの確認なしに自動で実行されます。
+例:
+python
+interpreter.auto_run = True  # ユーザーの確認なしに実行
+2 4 debug_mode
+このブールフラグを使用して、デバッグモードをオンまたはオフに切り替えます。
+例:
+python
+interpreter.debug_mode = True  # デバッグモードをオンにする
+2 5 max_output
+このプロパティは、出力応答の最大トークン数を設定します。
+例:
+python
+interpreter.max_output = 2000
+2 6 conversation_history
+会話履歴を保存するかどうかを示すブールフラグです。
+例:
+python
+interpreter.conversation_history = True  # 履歴を保存
+2 7 conversation_filename
+会話履歴が保存されるファイル名を設定します。
+例:
+python
+interpreter.conversation_filename = "my_conversation.json"
+2 8 conversation_history_path
+会話履歴が保存されるパスを設定できます。
+例:
+python
+import os
+interpreter.conversation_history_path = os.path.join("my_folder", "conversations")
+2 9 model
+使用する言語モデルを指定します。interpreter.localがTrueに設定されている場合、言語モデルはローカリーで実行されます。
+例:
+python
+interpreter.model = "gpt-3.5-turbo"
+2 10 temperature
+モデルの出力のランダム性のレベルを設定します。
+例:
+python
+interpreter.temperature = 0.7
+2 11 system_message
+モデルのシステムメッセージを文字列として保存します。これを探索または変更できます。
+例:
+python
+interpreter.system_message += "\nRun all shell commands with -y."
+2 12 context_window
+コンテキストウィンドウサイズをトークンで手動設定します。
+例:
+python
+interpreter.context_window = 16000
+2 13 max_tokens
+モデルが単一の応答で生成できる最大トークン数を設定します。
+例:
+python
+interpreter.max_tokens = 100
+2 14 api_base
+カスタムAPIを使用している場合、ここでその基本URLを指定できます。
+例:
+python
+interpreter.api_base = "https://api.example.com"
+2 15 api_key
+認証のためのAPIキーを設定します。
+例:
+python
+interpreter.api_key = "your_api_key_here"
+2 16 max_budget
+セッションの最大予算制限をUSDで設定します。
+例:
+python
+interpreter.max_budget = 0.01  # 1セント
+ストリーミング応答
+interpreter.chat(message)呼び出しでstream=Trueを設定すると、Open Interpreterからメッセージ、コード、コード出力をストリームできます。
+例:
+python
+for chunk in interpreter.chat("What's 34/24?", stream=True, display=False):
+    print(chunk)
+マジックコマンド
+Pythonで対話型チャットを実行すると、ターミナルでの使用向けにビルドされたマジックコマンドを使用できます。
+例:
+python
+interpreter.chat()
+デフォルト設定
+デフォルトの設定は、アプリケーションディレクトリの設定ファイルから継承されます。これはPythonとターミナルインターフェイスの両方に当てはまります。
+設定ファイルを開くには、以下を実行してください。
+python
+interpreter --config
+会話履歴
+会話はアプリケーションディレクトリに保存されます。これはPythonとターミナルインターフェイスの両方に当てはまります。
+会話が保存されているフォルダを表示するには、ターミナルで以下を実行してください。
+python
+interpreter --conversations
+予算管理
+max_budgetプロパティは、セッションの最大予算制限をUSDで設定します。
+python
+interpreter.max_budget = 0.01  # 1セント
+以上がOpen Interpreterの主要な属性、メソッド、機能です。これらの情報を利用して、効果的にコードを解釈し、実行できます。

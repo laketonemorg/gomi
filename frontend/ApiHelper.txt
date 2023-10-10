@@ -1,0 +1,14 @@
+import axios from 'axios';
+
+// コマンドを実行して結果を返すヘルパー関数
+export const executeCommand = async (command) => {
+    try {
+        // APIにコマンドをPOSTリクエストとして送信
+        const response = await axios.post('http://localhost:5000/run', { command });
+        // レスポンスから結果を取り出して返す
+        return { success: true, output: response.data.output };
+    } catch (error) {
+        // エラー発生時はエラーメッセージを返す
+        return { success: false, output: `Error: ${error.toString()}` };
+    }
+};

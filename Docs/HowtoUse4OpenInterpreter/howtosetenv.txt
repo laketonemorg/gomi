@@ -1,0 +1,13 @@
+公式ドキュメントより引用。設定例しか載っていなかったため、詳細は不明。
+以下引用内容：
+.envによる設定
+Open Interpreterでは、.envファイルを使ってデフォルトの動作を設定することができます。これにより、コマンドライン引数を毎回変更することなく、Open Interpreterを柔軟に設定できるようになります。
+
+サンプルの.env設定は次のとおりです：
+
+INTERPRETER_CLI_AUTO_RUN=False
+INTERPRETER_CLI_FAST_MODE=False
+INTERPRETER_CLI_LOCAL_RUN=False
+INTERPRETER_CLI_DEBUG=False
+INTERPRETER_CLI_USE_AZURE=False
+これらの値を.envファイルで変更することで、Open Interpreterのデフォルトの動作を変更できます。

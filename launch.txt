@@ -1,0 +1,120 @@
+ビルド:docker build -t openinterpreter .
+イメージ書き出し：docker save -o openinterpreter.tar openinterpriter
+イメージ読み込み：docker load -i openinterpreter.tar
+コンテナ作成：docker run -d --name openinterpreter -p 3000:3000 -p 5000:5000 openinterpreter
+最新作成：docker run -d --name openinterpreter -p 3000:3000 -p 5000:5000 -p 5001:5001 openinterpreter
+コンテナ内部接続：docker exec -it openinterpreter /bin/bash
+コンテナ停止：docker stop openinterpreter
+コンテナ起動：docker start openinterpreter
+コンテナ削除：docker rm openinterpreter
+停止せずとも強制削除：docker rm -f openinterpreter
+起動中のコンテナのみを表示:docker ps
+全てのコンテナを表示（起動中、停止中を含む）:docker ps -a
+
+新
+docker build -t guinterpreter .
+
+過去
+コンテナ内部接続：docker exec -it openinterpriter /bin/bash
+コンテナ停止：docker stop openinterpriter
+コンテナ起動：docker start openinterpriter
+コンテナ削除：docker rm openinterpriter
+停止せずとも強制削除：docker rm -f openinterpriter
+起動中のコンテナのみを表示:docker ps
+全てのコンテナを表示（起動中、停止中を含む）:docker ps -a
+
+docker-compose.ymlファイルが存在するディレクトリで、以下のコマンドを実行してコンテナを起動
+docker-compose up
+
+React
+http://localhost:3000 
+
+Flask
+http://localhost:5000 
+
+myenvアクティベート
+source /root/miniforge/bin/activate myenv
+
+config.ymlの絶対パス
+/root/.config/Open Interpreter/config.yaml
+
+システムメッセージ確認用（今のところ使うけどあとで使わなくなる）
+python
+import interpreter
+print(interpreter.system_message)
+
+ステージング：
+git add .
+
+コミット作成:
+git commit -m "Initial commit"
+
+GitHubへプッシュ:
+git push -u origin master
+
+
+会話履歴(json)
+\root\.local\share\Open Interpreter\conversations
+
+設定ファイル(config.yml)
+\root\.config\Open Interpreter
+
+memo
+
+アプリケーションの起動・停止を簡単に行うには、コンテナ内でプロセス管理ツールを使用するのが一般的です。例えば、supervisordはPythonで書かれたプロセス管理ツールで、これを使用することで、プロセスの起動・停止・再起動を容易に行うことができます。
+
+以下に、supervisordを使用してアプリケーションのプロセスを管理する基本的な手順を示します。
+
+1. supervisordのインストール
+Dockerfileに以下のコマンドを追加します。
+
+Dockerfile
+Copy code
+RUN /root/miniforge/envs/myenv/bin/pip install supervisor
+2. supervisordの設定ファイル作成
+supervisordの設定ファイルを作成します。例えば、以下のような内容のsupervisord.confを作成できます。
+
+ini
+Copy code
+[supervisord]
+nodaemon=true
+
+[program:flaskapp]
+command=python /app/backend/app.py
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/flaskapp.err.log
+stdout_logfile=/var/log/flaskapp.out.log
+
+[program:reactapp]
+command=npm start --prefix /app/frontend
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/reactapp.err.log
+stdout_logfile=/var/log/reactapp.out.log
+この設定ファイルでは、FlaskアプリケーションとReactアプリケーションの2つのプログラムが定義されています。
+
+3. Dockerfileで設定ファイルをコピー
+Dockerfileに以下のコマンドを追加し、supervisord.confをコンテナ内にコピーします。
+
+Dockerfile
+Copy code
+COPY supervisord.conf /etc/supervisord.conf
+4. CMDの変更
+DockerfileのCMDを、supervisordでプロセスを管理するように変更します。
+
+Dockerfile
+Copy code
+CMD ["/root/miniforge/envs/myenv/bin/supervisord", "-c", "/etc/supervisord.conf"]
+これで、コンテナを起動するとsupervisordがFlaskアプリケーションとReactアプリケーションを起動・管理します。また、コンテナ内で以下のコマンドを実行することで、アプリケーションのプロセスを停止・起動・再起動することができます。
+
+sh
+Copy code
+supervisorctl stop [プログラム名]
+supervisorctl start [プログラム名]
+supervisorctl restart [プログラム名]
+例えば、Flaskアプリケーションを停止するには、以下のコマンドを実行します。
+
+sh
+Copy code
+supervisorctl stop flaskapp

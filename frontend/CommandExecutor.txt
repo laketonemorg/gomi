@@ -1,0 +1,37 @@
+import React, { useEffect, useState } from 'react';
+import { Ansi } from 'ansi-to-react';
+import axios from 'axios';
+
+function CommandExecutor({ inputCommand, onOutputChange }) {
+  // コマンドの実行結果を保持するステート
+  const [output, setOutput] = useState('');
+
+  useEffect(() => {
+    const executeCommand = async () => {
+      try {
+        // FlaskサーバーにコマンドをPOSTリクエストとして送信
+        const response = await axios.post('http://localhost:5000/run', { command: inputCommand });
+        // レスポンスから結果を取得してステートを更新
+        setOutput(response.data.output);
+      } catch (error) {
+        // エラーが発生した場合、エラーメッセージをステートに設定
+        setOutput(`Error: ${error.toString()}`);
+      }
+    };
+
+    // inputCommandが変わったらコマンドを実行
+    executeCommand();
+  }, [inputCommand]);
+
+  useEffect(() => {
+    // 出力が変わったら親コンポーネントにコールバックを行う
+    onOutputChange(output);
+  }, [output, onOutputChange]);
+
+  return (
+    // ansi-to-reactを用いてスタイリングされたテキストを表示
+    <Ansi>{output}</Ansi>
+  );
+}
+
+export default CommandExecutor;

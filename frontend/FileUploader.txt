@@ -1,0 +1,36 @@
+import React, { useEffect } from 'react';
+import io from 'socket.io-client';
+
+const FileUploader = () => {
+  // useEffect フックを使って、コンポーネントがマウントされたタイミングでの処理を定義します。
+  useEffect(() => {
+    // サーバー（Flask）との通信を確立します。
+    const socket = io.connect('http://localhost:5001');
+    
+    // 'open_url' イベントをサブスクライブして、サーバーからのデータを待ち受けます。
+    socket.on('open_url', (data) => {
+      // ここで何らかのアクションを実行します。現在は、コンソールにログを出力します。
+      console.log("Requested to open:", data.url);
+    });
+  }, []);
+
+  // ユーザーがファイルをアップロードしたときに実行される関数を定義します。
+  const handleFileUpload = (event) => {
+    // 選択されたファイルを取得します。
+    const file = event.target.files[0];
+    if (file) {
+      // ファイルが選択された場合、そのファイルをハンドリングするロジックをここに実装します。
+    }
+  };
+
+  // UIをレンダリングします。ユーザーにファイルアップロードのインターフェースを提供します。
+  return (
+    <div>
+      <h2>ファイルアップローダー</h2>
+      {/* ファイルが選択されたとき、handleFileUpload関数が実行されるようにします。 */}
+      <input type="file" onChange={handleFileUpload} />
+    </div>
+  );
+};
+
+export default FileUploader;

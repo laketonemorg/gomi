@@ -1,0 +1,76 @@
+CentralManagerコンポーネント: 他のすべてのコンポーネントを管理する中央のコンポーネント。全てのステートと主要なロジックを管理します。
+InitialAppコンポーネント: アプリケーションの起動時に必要な処理（例えば、新しいセッションの開始）を実行します。useStartSession という機能を通じて、APIと通信し、新しいセッションIDを取得します。
+CommandInputコンポーネント：ユーザーからのコマンド入力を受け付け、その入力（command）を親コンポーネントにonCommandSubmitコールバックを通じて通知します。親コンポーネントは、このコールバック関数を用いて、入力されたコマンドを受け取り、適切に処理または状態を更新します。（reset_session=false）。
+CommandPresetコンポーネント：子コンポーネントからのコマンドオプションを受け取り、autoRunCommand、contextWindowSizeCommand、debugModeCommand、maxBudgetCommand、maxTokensCommand、outputRandomnessCommand、safeModeCommand、およびcomposerCommandのステートを更新し、これらを単一のコマンド文字列に連結して、onCommandChangeプロップを通じて親コンポーネントに{command: [連結されたコマンド], resetSession: true}の形で通知します。
+InteractiveSessionコンポーネント：親コンポーネントから受け取ったinputCommand（実行するコマンド）とsessionId（APIリクエストに必要なセッションID）を用いてAPIリクエストを行い、その結果（output）を親コンポーネントにonOutputChangeコールバックを通して通知します。親コンポーネントはこれらのpropsを提供し、結果を受け取って適切にハンドリングする責任を持ちます。
+CommandPromptGUIコンポーネント: 入力されたコマンドと、それに対する出力を表示するコンポーネント。
+AppExitコンポーネント：このコンポーネントには、アプリケーションを終了するためのボタンやUIが含まれます。ユーザーが終了ボタンをクリックすると、/endエンドポイントに対してセッションIDを持つPOSTリクエストを送信します。正常なレスポンスを受け取った後、Appコンポーネントの状態をInitialAppの起動前の状態にリセットします。
+
+この構造では、CentralManagerが全体の流れをコントロールし、各子コンポーネントが特定の役割を果たします。InitialAppコンポーネントはアプリケーションの初期化を担当し、CommandInputとCommandPresetコンポーネントはユーザーからの入力やプリセットコマンドをバックエンドに送信し、CommandPromptGUIコンポーネントはこれらのコマンドとバックエンドからの出力を表示します。
+
+CommandInputコンポーネント:完成
+CommandPresetコンポーネント:完成
+InteractiveSessionコンポーネント:完成
+CommandPromptGUIコンポーネント:完成(スタイル未設定、要設定)
+AppExitコンポーネント：完成
+次→API通信コンポーネントをCentralManagerの子に追加
+考慮はCPGUI
+
+
+a. CentralManagerコンポーネント
+役割: 全てのステートと主要なロジックを管理します。
+子コンポーネント: CommandInput, CommandPromptGUI, InteractiveSession
+管理するステート:
+inputCommand: 現在のコマンド入力
+sessionHistory: 入力と出力の履歴
+sessionId: APIセッションID
+b. CommandInputコンポーネント
+役割: コマンドの入力を受け取り、それをCentralManagerに送信します。
+props:
+onCommandSubmit: コマンド送信時のコールバック
+c. CommandPromptGUIコンポーネント
+役割: コマンドの入力と出力の履歴を表示します。
+props:
+history: 入力と出力の履歴
+d. InteractiveSessionコンポーネント
+役割: APIリクエストを行い、その結果をCentralManagerに通知します。
+props:
+inputCommand: 実行するコマンド
+sessionId: セッションID
+onOutputChange: 出力が変わった時のコールバック
+
+
+
+コンポーネント構造:
+
+    Appコンポーネント: アプリケーションのエントリーポイントで、InitialAppとCentralManagerを管理します。
+    InitialAppコンポーネント: アプリケーションの起動時に必要な処理（例えば、新しいセッションの開始）を実行し、その後Appに通知します。
+    CentralManagerコンポーネント: 他のすべてのコンポーネントを管理し、全体のステートと主要なロジックを管理します。
+    CommandInputコンポーネント: ユーザーからのコマンド入力を受け付け、CentralManagerに通知します。
+    CommandPresetコンポーネント: コマンドオプションを受け取り、CentralManagerに通知します。
+    InteractiveSessionコンポーネント: CentralManagerからコマンドとセッションIDを受け取り、APIリクエストを行い、その結果をCentralManagerに通知します。
+    CommandPromptGUIコンポーネント: 入力されたコマンドと、それに対する出力を表示します。
+    AppExitコンポーネント: アプリケーションの終了処理を担当し、セッション終了のリクエストをサーバーに送信します。
+
+コンポーネント説明:
+
+    Appコンポーネント: InitialAppコンポーネントでの初期化処理の完了を待ち、その後CentralManagerを起動します。
+    InitialAppコンポーネント: セッションIDの取得やユーザーからの初期入力を処理し、処理が完了したらAppコンポーネントに通知します。
+    CentralManagerコンポーネント: アプリケーションの主要な動作を管理し、子コンポーネントとのデータ交換を行います。
+    CommandInputコンポーネント: ユーザーのコマンド入力を処理し、CentralManagerに通知します。
+    CommandPresetコンポーネント: コマンドオプションを処理し、CentralManagerに通知します。
+    InteractiveSessionコンポーネント: CentralManagerから受け取ったコマンドとセッションIDを用いてAPIリクエストを行い、その結果をCentralManagerに通知します。
+    CommandPromptGUIコンポーネント: CentralManagerから受け取ったコマンドとその出力を表示します。
+    AppExitコンポーネント: アプリケーションを終了するためのUIを持ち、終了ボタンがクリックされたときにサーバーの/endエンドポイントに終了リクエストを送信します。リクエストが成功すれば、Appコンポーネントの状態をリセットし、InitialAppの起動前の状態に戻します。
+
+フロー概要:
+
+    起動フェーズ: Appコンポーネントがマウントし、InitialAppコンポーネントを表示します。
+    初期化フェーズ: InitialAppコンポーネントがセッションIDや他の初期化データを取得し、Appコンポーネントに通知します。
+    メインフェーズ: AppコンポーネントがCentralManagerコンポーネントをマウントし、アプリケーションのメインフェーズが開始します。
+
+CommandInputコンポーネント:完成
+CommandPresetコンポーネント:完成
+InteractiveSessionコンポーネント:完成
+CommandPromptGUIコンポーネント:完成(スタイル未設定、要設定)
+AppExitコンポーネント：完成

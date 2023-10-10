@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# スクリプトのあるディレクトリに移動
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+
+# ワークファイルのディレクトリパスを動的に取得
+workfile_dir="$script_dir/backend/workfile"
+
+# OSを判定
+case "$(uname -s)" in
+    MINGW*)     workfile_dir=$(cygpath -m "$workfile_dir");; # Git Bashの場合、cygpathでパス変換
+    MSYS*)      workfile_dir=$(cygpath -m "$workfile_dir");;
+    CYGWIN*)    workfile_dir=$(cygpath -m "$workfile_dir");;
+esac
+
+# Docker コマンドの実行
+docker run -it --rm -v "$workfile_dir":/container_directory your_image_name

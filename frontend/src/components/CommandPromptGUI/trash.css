@@ -1,0 +1,21 @@
+.commandPrompt {
+    background-color: #000;  /* 背景色を黒に設定 */
+    color: #0F0;             /* テキストカラーをライトグリーンに設定 */
+    font-family: 'Courier New', monospace;  /* フォントを等幅に設定 */
+    padding: 10px;           /* パディングを設定 */
+    max-height: 300px;       /* 最大の高さを設定 */
+    overflow-y: auto;        /* 縦方向にスクロール可能に設定 */
+    white-space: pre-wrap;   /* ホワイトスペースを保持し、必要なら改行を挿入 */
+    border: 1px solid #0F0;  /* 枠線をライトグリーンに設定 */
+  }
+  
+  /* 入力コマンドに対するスタイル */
+  .commandPrompt > div:nth-child(odd) {
+    color: #0F0;
+  }
+  
+  /* 出力コマンドに対するスタイル */
+  .commandPrompt > div:nth-child(even) {
+    color: #FFF;
+  }
+  

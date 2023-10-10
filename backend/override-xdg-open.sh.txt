@@ -1,0 +1,6 @@
+#!/bin/bash
+# 新しい xdg-open コマンドを定義
+echo '#!/bin/bash' > /usr/local/bin/xdg-open
+echo 'curl -X POST -d "url=$1" http://localhost:5001/open' >> /usr/local/bin/xdg-open
+# スクリプトを実行可能にする
+chmod +x /usr/local/bin/xdg-open

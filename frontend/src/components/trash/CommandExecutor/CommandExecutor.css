@@ -1,0 +1,15 @@
+/* CommandExecutor.css */
+
+.commandExecutor {
+    font-family: 'Courier New', monospace;
+    margin: 20px;
+  }
+  
+  .loading {
+    color: #ff9900;  /* ローディングメッセージをオレンジ色で表示 */
+  }
+  
+  .error {
+    color: #ff0000;  /* エラーメッセージを赤色で表示 */
+  }
+  

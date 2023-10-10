@@ -1,0 +1,35 @@
+// React ライブラリをインポート
+import React from 'react';
+// Dropdown コンポーネントをインポート
+import Dropdown from '../Dropdown/Dropdown';
+
+// GPTModelSelecter というReactコンポーネントを定義。onChange は外部から受け取る関数
+const GPTModelSelecter = ({ onChange }) => {
+    // モデルの選択肢とそれに対応するコマンド
+    // 利用可能なモデルとそれに対応するコマンドのリスト
+const models = [
+        { display: "GPT-4", command: 'interpreter --model "gpt-4"' },
+        { display: "GPT-4-32k", command: 'interpreter --model "gpt-4-32k"' },
+        { display: "GPT3.5", command: 'interpreter --model "gpt-3.5-turbo"' },
+        { display: "GPT3.5-16k", command: 'interpreter --model "gpt-3.5-turbo-16k"' },
+    ];
+
+    // ドロップダウンを表示し、選択されたモデルに基づいてコマンドを返す
+return (
+        <Dropdown 
+            options={models.map(model => model.display)} 
+            // モデルが選択されたときの処理
+onChange={(selected) => {
+                // 選択されたモデルに対応するコマンドを取得
+const modelCommand = models.find(model => model.display === selected).command;
+                // 最初に "CTRL-C" を送信
+onChange("CTRL-C");
+                // 1秒後にモデル選択のコマンドを送信
+setTimeout(() => { onChange(modelCommand); }, 1000);
+            }}
+        />
+    );
+};
+
+export default GPTModelSelecter;
+

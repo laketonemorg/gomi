@@ -1,0 +1,48 @@
+import React, { useEffect, useState } from 'react';
+import { Ansi } from 'ansi-to-react';
+import axios from 'axios';
+
+function InteractiveSession({ inputCommand, sessionId, onOutputChange }) {
+  // `output`はコマンド実行結果を保持します。初期値は空文字列です。
+  const [output, setOutput] = useState('');
+
+  useEffect(() => {
+    // `executeCommand`はサーバーにコマンドを送信して実行する非同期関数です。
+    const executeCommand = async () => {
+      try {
+        // `axios.post`を使用してサーバーにコマンドを送信し、結果を受け取ります。
+        // 送信するデータは`session_id`と`command`を含むオブジェクトです。
+        const response = await axios.post('http://localhost:5000/run', {
+          session_id: sessionId,
+          command: inputCommand
+        });
+        // コマンドの実行結果を`output`ステートにセットします。
+        setOutput(response.data.output);
+      } catch (error) {
+        // エラーが発生した場合、エラーメッセージを`output`ステートにセットします。
+        setOutput(`Error: ${error.toString()}`);
+      }
+    };
+
+    // `inputCommand`と`sessionId`が存在する場合、コマンドを実行します。
+    if (inputCommand && sessionId) {
+      executeCommand();
+    }
+    // 依存配列に`inputCommand`のみを含めています。これにより`inputCommand`が変更された時のみ上記処理が実行されます。
+  }, [inputCommand]);
+
+  useEffect(() => {
+    // `output`が変わるたびに、`onOutputChange`コールバック関数を呼び出します。
+    // 親コンポーネントはこのコールバックを通じてコマンドの実行結果を受け取ることができます。
+    onOutputChange(output);
+    // `output`と`onOutputChange`が変更された時のみ上記処理が実行されます。
+  }, [output, onOutputChange]);
+
+  // ANSIエスケープコードを解釈してフォーマットされたテキストを表示する`Ansi`コンポーネントを返します。
+  // これによりコマンドの実行結果が適切に表示されます。
+  return (
+    <Ansi>{output}</Ansi>
+  );
+}
+
+export default InteractiveSession;

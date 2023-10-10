@@ -1,0 +1,132 @@
+Terminal
+
+Interactive Chat
+To start an interactive chat in your terminal, either run interpreter from the command line:
+
+interpreter
+
+
+Start a New Chat
+In your terminal, Open Interpreter behaves like ChatGPT and will not remember previous conversations. Simply run interpreter to start a new chat:
+
+interpreter
+
+
+Save and Restore Chats
+In your terminal, Open Interpreter will save previous conversations to <your application directory>/Open Interpreter/conversations/.
+
+You can resume any of them by running --conversations. Use your arrow keys to select one , then press ENTER to resume it.
+
+interpreter --conversations
+
+
+Configure Default Settings
+We save default settings to a configuration file which can be edited by running the following command:
+
+interpreter --config
+
+
+Change your Language Model
+Open Interpreter uses LiteLLM to connect to language models.
+
+You can change the model by setting the model parameter:
+
+interpreter --model gpt-3.5-turbo
+interpreter --model claude-2
+interpreter --model command-nightly
+
+
+Arguments
+​
+--model or -m
+Specifies which language model to use.
+
+
+interpreter --model "gpt-3.5-turbo"
+​
+--local or -l
+Run the model locally.
+
+
+interpreter --local
+​
+--auto_run or -y
+Automatically run the interpreter without requiring user confirmation.
+
+
+interpreter --auto_run
+​
+--debug_mode or -d
+Run the interpreter in debug mode. Debug information will be printed at each step to help diagnose issues.
+
+
+interpreter --debug_mode
+​
+--temperature or -t
+Sets the randomness level of the model’s output.
+
+
+interpreter --temperature 0.7
+​
+--context_window or -c
+Manually set the context window size in tokens for the model.
+
+
+interpreter --context_window 16000
+​
+--max_tokens or -x
+Sets the maximum number of tokens that the model can generate in a single response.
+
+
+interpreter --max_tokens 100
+​
+--max_budget or -b
+Sets the maximum budget limit for the session in USD.
+
+
+interpreter --max_budget 0.01
+​
+--api_base or -ab
+If you are using a custom API, specify its base URL with this argument.
+
+
+interpreter --api_base "https://api.example.com"
+​
+--api_key or -ak
+Set your API key for authentication when making API calls.
+
+
+interpreter --api_key "your_api_key_here"
+​
+--safe_mode or -safe
+Enable or disable experimental safety mechanisms like code scanning. Valid options are off, ask, and auto.
+
+
+interpreter --safe_mode ask
+
+
+Settings
+Default settings can be edited via a configuration file. To open the file, run:
+
+
+Conversation History
+You can resume chats via interpreter --conversations.
+
+
+interpreter --conversations
+interpreter --config
+
+Magic Commands
+Magic commands can be used to control the interpreter’s behavior in interactive mode:
+
+%debug [true/false]: Toggle debug mode
+%reset: Reset the current session
+%undo: Remove the last message and its response
+%save_message [path]: Save messages to a JSON file
+%load_message [path]: Load messages from a JSON file
+
+Budget Manager
+You can set a maximum budget per session:
+
+
+interpreter --max_budget 0.01

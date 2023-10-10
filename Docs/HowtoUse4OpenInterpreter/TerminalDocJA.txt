@@ -1,0 +1,133 @@
+ターミナル
+
+
+対話型チャット
+ターミナルで対話型のチャットを開始するには、コマンドラインからinterpreterを実行してください:
+
+interpreter
+
+
+新しいチャットを開始
+ターミナルでは、Open InterpreterはChatGPTのように前回の会話を覚えていません。新しいチャットを開始するには、interpreterを実行してください:
+
+interpreter
+
+
+チャットの保存と復元
+ターミナルのOpen Interpreterは、前回の会話を<アプリケーションのディレクトリ>/Open Interpreter/conversations/に保存します。
+
+それらを再開するには、--conversationsを実行してください。矢印キーを使用して1つを選択し、それを再開するにはENTERを押してください。
+
+interpreter --conversations
+
+
+デフォルト設定の設定
+デフォルトの設定は設定ファイルに保存され、以下のコマンドを実行することで編集できます:
+
+interpreter --config
+
+
+言語モデルの変更
+Open InterpreterはLiteLLMを使用して言語モデルに接続します。
+
+モデルパラメータを設定することでモデルを変更できます:
+
+interpreter --model gpt-3.5-turbo
+interpreter --model claude-2
+interpreter --model command-nightly
+
+
+引数
+
+--model または -m
+使用する言語モデルを指定します。
+
+interpreter --model "gpt-3.5-turbo"
+
+
+--local または -l
+モデルをローカルで実行します。
+
+interpreter --local
+
+
+--auto_run または -y
+ユーザーの確認を必要とせずに自動的にinterpreterを実行します。
+
+interpreter --auto_run
+
+
+--debug_mode または -d
+デバッグモードでinterpreterを実行します。各ステップでデバッグ情報が表示され、問題の診断に役立ちます。
+
+interpreter --debug_mode
+
+
+--temperature または -t
+モデルの出力のランダム性のレベルを設定します。
+
+interpreter --temperature 0.7
+
+
+--context_window または -c
+モデルのコンテキストウィンドウサイズをトークンで手動で設定します。
+
+interpreter --context_window 16000
+
+
+--max_tokens または -x
+モデルが1回の応答で生成できるトークンの最大数を設定します。
+
+interpreter --max_tokens 100
+
+
+--max_budget または -b
+セッションの最大予算制限をUSDで設定します。
+
+interpreter --max_budget 0.01
+
+
+--api_base または -ab
+カスタムAPIを使用している場合、この引数でその基本URLを指定します。
+
+interpreter --api_base "https://api.example.com"
+
+
+--api_key または -ak
+APIコールを行う際の認証のためのAPIキーを設定します。
+
+interpreter --api_key "your_api_key_here"
+
+
+--safe_mode または -safe
+コードスキャンなどの実験的な安全機構を有効または無効にします。有効なオプションはoff、ask、およびautoです。
+
+interpreter --safe_mode ask
+
+
+設定
+デフォルトの設定は、設定ファイルを通じて編集できます。ファイルを開くには、次を実行します:
+
+interpreter --config
+
+
+会話履歴
+interpreter --conversationsを使ってチャットを再開できます。
+
+interpreter --conversations
+
+
+マジックコマンド
+マジックコマンドは、インタラクティブモードでのinterpreterの動作を制御するために使用できます:
+
+%debug [true/false]: デバッグモードの切り替え
+%reset: 現在のセッションをリセット
+%undo: 最後のメッセージとその応答を削除
+%save_message [path]: メッセージをJSONファイルに保存
+%load_message [path]: JSONファイルからメッセージを読み込む
+
+
+予算マネージャー
+セッションごとの最大予算を設定できます:
+
+interpreter --max_budget 0.01
